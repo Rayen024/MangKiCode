@@ -1,14 +1,22 @@
-import './global.css';
-import React from 'react';
-import {Text, View} from 'react-native';
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import SplashScreen   from "./src/screens/auth/SplashScreen";
+import LoginScreen    from "./src/screens/auth/LoginScreen";
+import RegisterScreen from "./src/screens/auth/RegisterScreen";
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <View className="flex-1 items-center justify-center bg-white">
-      <Text className="text-3xl font-bold text-pink-500">Halo MangKiCode</Text>
-      <Text className="mt-2 text-base text-gray-600">
-        Aplikasi belajar coding
-      </Text>
-    </View>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Splash"    component={SplashScreen} />
+          <Stack.Screen name="Login"     component={LoginScreen} />
+          <Stack.Screen name="Register"  component={RegisterScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }

@@ -114,7 +114,6 @@ create policy "quiz_read" on public.quiz_questions
             where l.id = lesson_id and l.is_published)
   );
 
--- Data pribadi: user hanya boleh melihat dan mengubah miliknya sendiri
 create policy "profiles_select_own" on public.profiles
   for select using (auth.uid() = id);
 create policy "profiles_update_own" on public.profiles
