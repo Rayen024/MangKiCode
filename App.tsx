@@ -4,6 +4,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import SplashScreen   from "./src/screens/auth/SplashScreen";
 import LoginScreen    from "./src/screens/auth/LoginScreen";
 import RegisterScreen from "./src/screens/auth/RegisterScreen";
+import Dashboard      from "./src/screens/main/Dashboard";
 
 const Stack = createNativeStackNavigator();
 
@@ -15,6 +16,7 @@ export default function App() {
           <Stack.Screen name="Splash"    component={SplashScreen} />
           <Stack.Screen name="Login"     component={LoginScreen} />
           <Stack.Screen name="Register"  component={RegisterScreen} />
+          <Stack.Screen name="Dashboard" component={Dashboard} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

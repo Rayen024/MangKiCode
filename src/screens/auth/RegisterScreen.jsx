@@ -1,5 +1,7 @@
 import { useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -16,6 +18,7 @@ import { useNavigation } from "@react-navigation/native";
 import Maskot       from "../../assets/maskot/03_gembira.svg";
 import IconGoogle   from "../../assets/login/google-icon-logo-svgrepo-com.svg";
 import IconFacebook from "../../assets/login/facebook-fill.svg";
+import { supabase }  from "../../services/supabase";
 
 // ── Warna konsisten ───────────────────────────────────────────────
 const GREEN = "#2F7D46";
@@ -31,6 +34,7 @@ export default function RegisterScreen() {
   const [showPass,    setShowPass]    = useState(false);
   const [showKonfirm, setShowKonfirm] = useState(false);
   const [errors,      setErrors]      = useState({});
+  const [loading,     setLoading]     = useState(false);
 
   // ── Validasi inline ───────────────────────────────────────────
   const validate = () => {
@@ -43,10 +47,27 @@ export default function RegisterScreen() {
     return Object.keys(e).length === 0;
   };
 
-  const handleDaftar = () => {
+  const handleDaftar = async () => {
     if (!validate()) return;
-    // TODO: implementasi register
-    console.log("Daftar:", nama, email, password);
+    setLoading(true);
+    try {
+      // Buat akun + kirim full_name via metadata → trigger DB yang insert ke profiles
+      const { data, error: authErr } = await supabase.auth.signUp({
+        email:    email.trim().toLowerCase(),
+        password: password,
+        options: {
+          data: { full_name: nama.trim() },
+        },
+      });
+      if (authErr) throw authErr;
+
+      // Navigasi ke Dashboard (trigger DB otomatis buat row profiles)
+      navigation.replace("Dashboard");
+    } catch (err) {
+      Alert.alert("Gagal Daftar", err.message ?? "Terjadi kesalahan.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const clearErr = (key) => setErrors(prev => ({ ...prev, [key]: null }));
@@ -146,8 +167,16 @@ export default function RegisterScreen() {
         </Text>
 
         {/* ── Tombol Daftar Sekarang ────────────────────────────── */}
-        <TouchableOpacity style={styles.btnDaftar} onPress={handleDaftar} activeOpacity={0.85}>
-          <Text style={styles.btnDaftarText}>Daftar Sekarang</Text>
+        <TouchableOpacity
+          style={[styles.btnDaftar, loading && { opacity: 0.7 }]}
+          onPress={handleDaftar}
+          activeOpacity={0.85}
+          disabled={loading}
+        >
+          {loading
+            ? <ActivityIndicator color="#fff" />
+            : <Text style={styles.btnDaftarText}>Daftar Sekarang</Text>
+          }
         </TouchableOpacity>
 
         {/* ── Separator ─────────────────────────────────────────── */}

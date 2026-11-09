@@ -13,7 +13,6 @@ export default function SplashScreen() {
   const appear = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Muncul pelan-pelan
     Animated.timing(appear, {
       toValue: 1,
       duration: 600,

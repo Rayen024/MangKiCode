@@ -1,5 +1,7 @@
 import { useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -13,14 +15,12 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import Maskot    from "../../assets/maskot/02_bersemangat.svg";
+import Maskot       from "../../assets/maskot/02_bersemangat.svg";
 import IconGoogle   from "../../assets/login/google-icon-logo-svgrepo-com.svg";
 import IconFacebook from "../../assets/login/facebook-fill.svg";
+import { supabase }  from "../../services/supabase";
 
-// ── Warna konsisten dengan SplashScreen ──────────────────────────
-const GREEN       = "#2F7D46";
-const GREEN_LIGHT = "#4CAF6E";
-const BG          = "#E8F5E9"; // putih kehijau-an terang
+const GREEN = "#2F7D46";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -28,10 +28,24 @@ export default function LoginScreen() {
   const [email,    setEmail]    = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
+  const [loading,  setLoading]  = useState(false);
 
-  const handleLogin = () => {
-    // TODO: implementasi autentikasi
-    console.log("Login:", email, password);
+  const handleLogin = async () => {
+    if (!email.includes("@")) { Alert.alert("Email tidak valid"); return; }
+    if (!password)             { Alert.alert("Password tidak boleh kosong"); return; }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email:    email.trim().toLowerCase(),
+        password: password,
+      });
+      if (error) throw error;
+      navigation.replace("Dashboard");
+    } catch (err) {
+      Alert.alert("Gagal Masuk", err.message ?? "Email atau password salah.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -41,13 +55,8 @@ export default function LoginScreen() {
     >
       <StatusBar backgroundColor={GREEN} barStyle="light-content" />
 
-      {/* ── Header hijau dengan maskot (di-crop: hanya muka + tangan) ── */}
+      {}
       <View style={[styles.header, { paddingTop: 48 }]}>
-        {/*
-          viewBox asli: 0 0 400 440
-          Crop ke area muka+tangan: x=50 y=60 w=300 h=260
-          Hasil: hanya kepala, mata, tangan yang terlihat
-        */}
         <Maskot
           width={width * 0.52}
           height={width * 0.52 * (280 / 340)}
@@ -97,9 +106,17 @@ export default function LoginScreen() {
           <Text style={styles.forgot}>Lupa password?</Text>
         </TouchableOpacity>
 
-        {/* ── Tombol Login ──────────────────────────────────────── */}
-        <TouchableOpacity style={styles.btnLogin} onPress={handleLogin} activeOpacity={0.85}>
-          <Text style={styles.btnLoginText}>Masuk</Text>
+        {/* ── Tombol Masuk ──────────────────────────────────────── */}
+        <TouchableOpacity
+          style={[styles.btnLogin, loading && { opacity: 0.7 }]}
+          onPress={handleLogin}
+          activeOpacity={0.85}
+          disabled={loading}
+        >
+          {loading
+            ? <ActivityIndicator color="#fff" />
+            : <Text style={styles.btnLoginText}>Masuk</Text>
+          }
         </TouchableOpacity>
 
         {/* ── Separator ─────────────────────────────────────────── */}
