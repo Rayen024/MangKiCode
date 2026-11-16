@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Animated, Easing, StatusBar, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import MaskotAnimated from "../../components/MaskotAnimated";
+import { supabase } from "../../services/supabase";
 
 const BG = "#2F7D46";
 
@@ -20,7 +21,20 @@ export default function SplashScreen() {
       useNativeDriver: true,
     }).start();
 
-    const timer = setTimeout(() => navigation.replace("Login"), 4000);
+    const checkSessionAndNavigate = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          navigation.replace("Dashboard");
+          return;
+        }
+      } catch (e) {
+        // Abaikan error session check
+      }
+      navigation.replace("Login");
+    };
+
+    const timer = setTimeout(checkSessionAndNavigate, 2500);
     return () => clearTimeout(timer);
   }, [appear, navigation]);
 
