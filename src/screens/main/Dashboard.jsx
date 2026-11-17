@@ -161,12 +161,7 @@ export default function Dashboard() {
           <TouchableOpacity
             style={styles.btnPrimaryYellow}
             activeOpacity={0.85}
-            onPress={() =>
-              setModalInfo({
-                title: 'Teka-Teki MangKi',
-                desc: 'Mode game petualangan logika sedang dipersiapkan untuk level berikutnya!',
-              })
-            }
+            onPress={() => navigation.navigate('LevelMap')}
           >
             <Text style={styles.btnPrimaryYellowText}>Mulai Tantangan</Text>
           </TouchableOpacity>
@@ -428,7 +423,7 @@ export default function Dashboard() {
         <TouchableOpacity
           style={styles.navItem}
           activeOpacity={0.7}
-          onPress={() => setActiveTab('Permainan')}
+          onPress={() => navigation.navigate('LevelMap')}
         >
           {activeTab === 'Permainan' ? (
             <View style={styles.activeIconPill}>
