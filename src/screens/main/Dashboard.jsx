@@ -15,6 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../../services/supabase';
 import { getActiveCourse, getCourses } from '../../services/courseService';
 import { getUserAdventureStats, getUserProfile } from '../../services/progressService';
+import CourseListScreen from '../courses/CourseListScreen';
 import MascotHead from '../../components/ui/MascotHead';
 import {
   IconBook,
@@ -117,37 +118,7 @@ export default function Dashboard() {
   // Render view berdasarkan tab yang dipilih
   const renderTabContent = () => {
     if (activeTab === 'Belajar') {
-      return (
-        <ScrollView style={styles.tabContentScroll} showsVerticalScrollIndicator={false}>
-          <Text style={styles.tabHeading}>Daftar Kursus Belajar</Text>
-          <Text style={styles.tabSubheading}>Pilih materi untuk memulai belajar kode bersama MangKi</Text>
-          {allCourses.map((c, idx) => (
-            <TouchableOpacity
-              key={c.id || idx}
-              style={styles.courseCard}
-              activeOpacity={0.85}
-              onPress={() =>
-                setModalInfo({
-                  title: c.title,
-                  desc: `${c.description || 'Pelajari materi interaktif ini.'}\n\nJumlah Pelajaran: ${c.lessons?.length || 0}`,
-                })
-              }
-            >
-              <View style={styles.courseBadge}>
-                <Text style={styles.courseBadgeText}>Level {c.order_index || idx + 1}</Text>
-              </View>
-              <Text style={styles.courseTitle}>{c.title}</Text>
-              <Text style={styles.courseDesc}>{c.description}</Text>
-              <View style={styles.courseFooter}>
-                <Text style={styles.courseLessonsCount}>
-                  📚 {c.lessons?.length || 0} Pelajaran
-                </Text>
-                <Text style={styles.courseAction}>Lihat Materi →</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      );
+      return <CourseListScreen navigation={navigation} />;
     }
 
     if (activeTab === 'Permainan') {
@@ -243,12 +214,7 @@ export default function Dashboard() {
           <TouchableOpacity
             style={styles.heroActionBtn}
             activeOpacity={0.85}
-            onPress={() =>
-              setModalInfo({
-                title: activeCourse?.title || 'Pengenalan Coding',
-                desc: `Pelajaran ke-${currentLessonIndex}: "${currentLesson.title}"\n\nSiap untuk belajar dasar pemrograman bersama MangKi?`,
-              })
-            }
+            onPress={() => setActiveTab('Belajar')}
           >
             <Text style={styles.heroActionBtnText}>Lanjutkan Belajar</Text>
           </TouchableOpacity>
@@ -302,12 +268,7 @@ export default function Dashboard() {
             <TouchableOpacity
               style={styles.missionBtn}
               activeOpacity={0.85}
-              onPress={() =>
-                setModalInfo({
-                  title: 'Misi Hari Ini',
-                  desc: `Materi: ${activeCourse?.title || 'Pengenalan Coding'}\nTopik: ${currentLesson?.title || 'Dasar Pemrograman'}\n\nSelesaikan materi untuk menambah XP dan menjaga streak belajarmu!`,
-                })
-              }
+              onPress={() => setActiveTab('Belajar')}
             >
               <Text style={styles.missionBtnText}>Mulai Belajar</Text>
             </TouchableOpacity>

@@ -14,6 +14,10 @@ import Dashboard from '../screens/main/Dashboard';
 import LevelMapScreen from '../screens/game/LevelMapScreen';
 import GameplayScreen from '../screens/game/GameplayScreen';
 
+// Layar Belajar & Pelajaran
+import LessonScreen from '../screens/lessons/LessonScreen';
+import QuizScreen from '../screens/quiz/QuizScreen';
+
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
@@ -31,6 +35,10 @@ export default function AppNavigator() {
         {/* Layar Peta Level & Gameplay buatanmu */}
         <Stack.Screen name="LevelMap" component={LevelMapScreen} />
         <Stack.Screen name="Gameplay" component={GameplayScreen} />
+
+        {/* Layar Belajar & Latihan */}
+        <Stack.Screen name="LessonDetail" component={LessonScreen} />
+        <Stack.Screen name="Quiz" component={QuizScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
